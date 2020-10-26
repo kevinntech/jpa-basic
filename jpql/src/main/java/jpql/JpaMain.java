@@ -1,9 +1,6 @@
-package hellojpa;
+package jpql;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.List;
 
 public class JpaMain {
@@ -19,15 +16,15 @@ public class JpaMain {
 
             Member member = new Member();
             member.setUsername("member1");
-
+            member.setAge(10);
             em.persist(member);
 
-            List<Member> resultList = em.createNativeQuery("select MEMBER_ID, CITY, STREET, ZIPCODE, USERNAME from MEMBER", Member.class)
+            List<MemberDTO> result = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
                     .getResultList();
 
-            for (Member member1 : resultList) {
-                System.out.println("member1 = " + member1);
-            }
+            MemberDTO memberDTO = result.get(0);
+            System.out.println("memberDTO = " + memberDTO.getUsername());
+            System.out.println("memberDTO = " + memberDTO.getAge());
 
             tx.commit();
         }catch (Exception e){
