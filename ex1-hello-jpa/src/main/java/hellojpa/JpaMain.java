@@ -1,7 +1,5 @@
 package hellojpa;
 
-import org.hibernate.Hibernate;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -17,22 +15,43 @@ public class JpaMain {
         EntityTransaction tx = em.getTransaction();
 
         tx.begin();
-
         try{
-            Child child1 = new Child();
-            Child child2 = new Child();
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setHomdAddress(new Address("city1","street", "1000" ));
 
-            Parent parent = new Parent();
-            parent.addChild(child1); // 부모-자식 간 양방향 연관관계 설정
-            parent.addChild(child2);
+            member.getFavoriteFoods().add("치킨");
+            member.getFavoriteFoods().add("족발");
+            member.getFavoriteFoods().add("피자");
 
-            em.persist(parent);
+            member.getAddressHistory().add(new AddressEntity("old1","street", "1000" ));
+            member.getAddressHistory().add(new AddressEntity("old2","street", "1000" ));
+
+            em.persist(member);
 
             em.flush();
             em.clear();
 
-            Parent findParent = em.find(Parent.class, parent.getId());
-            findParent.getChildren().remove(0); // 컬렉션에서 자식 엔티티를 제거한다.
+            System.out.println("================ START ================");
+            Member findMember = em.find(Member.class, member.getId());
+//
+//            Address oldAddress = findMember.getHomdAddress();
+//
+//            // 1. 임베디드 값 타입 수정
+//            findMember.setHomdAddress(new Address("newCity",
+//                                                    oldAddress.getStreet(),
+//                                                    oldAddress.getZipcode()));
+//
+//            // 2. 기본값 타입 컬렉션 수정
+//            findMember.getFavoriteFoods().remove("치킨");
+//            findMember.getFavoriteFoods().add("한식");
+//
+//            // 3. 임베디드 값 타입 컬렉션 수정
+//            List<AddressEntity> addressHistory = findMember.getAddressHistory();
+//            addressHistory.remove(new AddressEntity("old1","street", "1000" ));
+//            addressHistory.add(new AddressEntity("newCity1","street", "1000" ));
+
+
 
             tx.commit();
         }catch (Exception e){
